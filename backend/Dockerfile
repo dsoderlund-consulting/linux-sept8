@@ -29,5 +29,7 @@ EXPOSE 8080
 # Set the entrypoint to run the application
 ENTRYPOINT ["dotnet", "ShoppingListApi.dll"]
 
+ENV TEST=1234
+
 # Optional: Set ASPNETCORE_URLS if you need to force it to listen on a specific port/interface
 # ENV ASPNETCORE_URLS=http://+:80
