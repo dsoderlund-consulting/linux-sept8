@@ -1,0 +1,82 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for frontend changes
+        uses: dorny/paths-filter@v2
+        id: filter-frontend
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+      - name: set SHORT_SHA
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Build & push Docker image
+        if: steps.filter-frontend.outputs.frontend == 'true'
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{ secrets.DOCKER_HUB_USERNAME }}/linux-sept8-frontend
+          addLatest: true
+          addTimestamp: true
+          tags: ${SHORT_SHA}
+          directory: ./frontend
+          dockerfile: ./frontend/Dockerfile
+          registry: docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Invoke demo-gitops image patch
+        if: steps.filter-frontend.outputs.frontend == 'true'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: demo-gitops-update-app.yaml
+          repo: dsoderlund-consulting/demo-gitops
+          inputs: '{ "component": "linux-sept8", "subComponent": "frontend", "newTag": "${{ env.SHORT_SHA }}" }'
+          token: "${{ secrets.DEMO_GITOPS_DISPATCH }}"
+  build-and-push-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for backend changes
+        uses: dorny/paths-filter@v2
+        id: filter-backend
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+      - name: set SHORT_SHA
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Build & push Docker image
+        if: steps.filter-backend.outputs.backend == 'true'
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{ secrets.DOCKER_HUB_USERNAME }}/linux-sept8-backend
+          addLatest: true
+          addTimestamp: true
+          tags: ${SHORT_SHA}
+          directory: ./backend
+          dockerfile: ./backend/Dockerfile
+          registry: docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Invoke demo-gitops image patch
+        if: steps.filter-backend.outputs.backend == 'true'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: demo-gitops-update-app.yaml
+          repo: dsoderlund-consulting/demo-gitops
+          inputs: '{ "component": "linux-sept8", "subComponent": "backend", "newTag": "${{ env.SHORT_SHA }}" }'
+          token: "${{ secrets.DEMO_GITOPS_DISPATCH }}"

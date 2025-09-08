@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: linux-sept8-postgres-cluster
+  namespace: default
+spec:
+  instances: 1
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 1Gi
+  postgresql:
+    parameters:
+      shared_buffers: 128MB
+
+

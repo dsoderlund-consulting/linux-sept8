@@ -1,0 +1,5 @@
+site_name: 'FullstackApp - linux-sept8'
+nav:
+  - Home: index.md
+plugins:
+  - techdocs-core

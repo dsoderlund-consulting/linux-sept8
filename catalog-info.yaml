@@ -1,0 +1,48 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "linux-sept8-frontend"
+  links:
+    - url: https://linux-sept8.sam.dsoderlund.consulting
+      title: CI/CD Deployment
+      icon: website
+spec:
+  type: website
+  owner: dsoderlund.consulting
+  lifecycle: experimental
+  subcomponentOf: "linux-sept8"
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "linux-sept8-backend"
+  links:
+    - url: https://linux-sept8.sam.dsoderlund.consulting/api
+      title: CI/CD Deployment
+      icon: service
+spec:
+  type: service
+  owner: dsoderlund.consulting
+  lifecycle: experimental
+  subcomponentOf: "linux-sept8"
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "linux-sept8"
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    argocd/app-selector: "component=linux-sept8"
+    github.com/project-slug: dsoderlund-consulting/linux-sept8
+  links:
+    - url: https://linux-sept8.sam.dsoderlund.consulting
+      title: CI/CD Deployment (frontend)
+      icon: website
+    - url: https://linux-sept8.sam.dsoderlund.consulting/api
+      title: CI/CD Deployment (backend)
+      icon: service
+spec:
+  type: service
+  owner: dsoderlund.consulting
+  lifecycle: experimental
+  system: demo-system
