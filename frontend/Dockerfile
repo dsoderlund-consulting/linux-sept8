@@ -25,5 +25,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Expose port 8081 for HTTP traffic
 EXPOSE 8081
 
+ENV TEST=1234
+
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
+

@@ -26,6 +26,8 @@ COPY --from=build /app/publish .
 # Your k8s service targets this ContainerPort
 EXPOSE 8080
 
+ENV TEST=1234
+
 # Set the entrypoint to run the application
 ENTRYPOINT ["dotnet", "ShoppingListApi.dll"]
 
